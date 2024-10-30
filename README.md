@@ -42,6 +42,7 @@ func main() {
 ## Supported sources
 
 ✅: Implemented
+
 🔍: Not implemented yet
 
 | Source | Type | Description | Status |
@@ -49,6 +50,8 @@ func main() {
 | AWS Secrets Manager | `aws_secretsmanager` | Load secret from AWS Secrets Manager | ✅ |
 | AWS Systems Manager ParameterStore | `aws_ssm` | Load secret from AWS Systems Manager ParameterStore | 🔍 |
 | Amazon S3 | `aws_s3` | Load secret from Amazon S3 | 🔍 |
+| Google Cloud Secret Manager | `google_secretmanager` | Load secret from Google Cloud Secret Manager | 🔍 |
+| 1Password | `onepassword` | Load secret from 1Password | 🔍 |
 
 ## License
 
