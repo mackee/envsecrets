@@ -2,15 +2,20 @@ package awssecretsmanager
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log/slog"
+	"maps"
+	"slices"
+	"strings"
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/mackee/go-envsecrets"
+	"github.com/mackee/envsecrets"
 )
 
 const (
-	targetType = "awssecretsmanager"
+	targetType = "aws_secretsmanager"
 )
 
 type resolver struct {
@@ -57,16 +62,23 @@ func (r *resolver) Resolve(ctx context.Context) error {
 	if len(r.envs) == 0 {
 		return nil
 	}
+	slog.DebugContext(ctx, "resolve by aws secrets manager")
 	client, err := r.clientLoader(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to load client: %w", err)
 	}
-	ids := make([]string, 0, len(r.envs))
+	idm := make(map[string]struct{})
 	m := make(map[string]*envsecrets.Env)
 	for _, env := range r.envs {
-		ids = append(ids, env.Args)
+		idKey := strings.SplitN(env.Args, ".", 2)
+		if len(idKey) == 2 {
+			idm[idKey[0]] = struct{}{}
+		} else {
+			idm[env.Args] = struct{}{}
+		}
 		m[env.Args] = env
 	}
+	ids := slices.Collect(maps.Keys(idm))
 
 	resp, err := client.BatchGetSecretValue(
 		ctx,
@@ -77,12 +89,26 @@ func (r *resolver) Resolve(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to batch get secret value: %w", err)
 	}
+	svs := make(map[string]string, len(resp.SecretValues))
 	for _, secret := range resp.SecretValues {
-		env, ok := m[*secret.Name]
-		if !ok {
-			return fmt.Errorf("secret not found: %s", *secret.Name)
+		key := *secret.Name
+		slog.DebugContext(ctx, "secret", slog.String("key", key))
+		var decoded map[string]string
+		if err := json.Unmarshal([]byte(*secret.SecretString), &decoded); err == nil {
+			for k, v := range decoded {
+				jk := strings.Join([]string{key, k}, ".")
+				svs[jk] = v
+				slog.DebugContext(ctx, "nested secret", slog.String("key", jk))
+			}
 		}
-		env.Value = *secret.SecretString
+		svs[key] = *secret.SecretString
+	}
+	for k, v := range svs {
+		env, ok := m[k]
+		if !ok {
+			continue
+		}
+		env.Value = v
 		env.Resolved = true
 	}
 

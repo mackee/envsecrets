@@ -1,6 +1,6 @@
 # envsecrets
 
-"envsecrets" is a meta framework fo environment variable loader. It is designed to load environment variables from various sources.
+"envsecrets" is a meta framework for environment variable loader. It is designed to load environment variables from various sources.
 
 ## Installation
 
@@ -15,7 +15,13 @@ $ go get github.com/mackee/envsecrets
 If you want set from AWS Secrets Manager, you should set environment variable like below.
 
 ```bash
-export SECRET_ENV=secretfrom:awssecretsmanager:<secret-name>
+export <SECRET_ENVNAME>=secretfrom:aws_secretsmanager:<secret-name>
+```
+
+If set a json value to the secret, you can access the value by specifying the key.
+
+```bash
+export <SECRET_ENVNAME>=secretfrom:aws_secretsmanager:<secret-name>.<key>
 ```
 
 ### Load environment variables
@@ -40,6 +46,12 @@ func main() {
 
 | Source | Type | Description | Status |
 | --- | --- | --- | --- |
-| AWS Secrets Manager | `awssecretsmanager` | Load secret from AWS Secrets Manager | ✅ |
-| AWS Systems Manager ParameterStore | `awsssm` | Load secret from AWS Systems Manager ParameterStore | 🔍 |
-| Amazon S3 | `awss3` | Load secret from Amazon S3 | 🔍 |
+| AWS Secrets Manager | `aws_secretsmanager` | Load secret from AWS Secrets Manager | ✅ |
+| AWS Systems Manager ParameterStore | `aws_ssm` | Load secret from AWS Systems Manager ParameterStore | 🔍 |
+| Amazon S3 | `aws_s3` | Load secret from Amazon S3 | 🔍 |
+
+## License
+
+Copyright (c) 2024- [mackee](https://github.com/mackee)
+
+Licensed under MIT License.
