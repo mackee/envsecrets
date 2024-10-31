@@ -46,11 +46,11 @@ func main() {
 🔍: Not implemented yet
 
 | Source | Type | Description | Format | Status |
-| --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | AWS Secrets Manager | `aws_secretsmanager` | Load secret from AWS Secrets Manager | `secretfrom:aws_secretsmanager:<id>[.<key>]` | ✅ |
 | AWS Systems Manager ParameterStore | `aws_ssm` | Load secret from AWS Systems Manager ParameterStore | `secretfrom:aws_ssm:<name>[.<key>]` | ✅ |
 | Amazon S3 | `aws_s3` | Load secret from Amazon S3 | `secretfrom:aws_s3:s3://<bucket-name>/<object-key>[.<key>]` | ✅ |
-| Google Cloud Secret Manager | `google_secretmanager` | Load secret from Google Cloud Secret Manager | `secretfrom:google_secretmanager:projects/<project>/secrets/<name>/versions/<version>[.<key>] |  ✅ |
+| Google Cloud Secret Manager | `google_secretmanager` | Load secret from Google Cloud Secret Manager | `secretfrom:google_secretmanager:projects/<project>/secrets/<name>/versions/<version>[.<key>]` |  ✅ |
 | 1Password | `onepassword` | Load secret from 1Password | | 🔍 |
 
 ## License
