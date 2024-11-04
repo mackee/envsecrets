@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/mackee/envsecrets"
@@ -83,7 +84,8 @@ func (r *resolver) Resolve(ctx context.Context) error {
 	resp, err := client.GetParameters(
 		ctx,
 		&ssm.GetParametersInput{
-			Names: names,
+			Names:          names,
+			WithDecryption: aws.Bool(true),
 		},
 	)
 	if err != nil {

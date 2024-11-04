@@ -92,11 +92,14 @@ func (r *resolver) Resolve(ctx context.Context) error {
 			slog.ErrorContext(ctx, "unsupported scheme", slog.String("scheme", u.Scheme), slog.String("args", name))
 			continue
 		}
+		bucket := u.Host
+		key := strings.TrimPrefix(u.Path, "/")
+		slog.DebugContext(ctx, "get object", slog.String("bucket", bucket), slog.String("key", key))
 		resp, err := client.GetObject(
 			ctx,
 			&s3.GetObjectInput{
-				Bucket: &u.Host,
-				Key:    &u.Path,
+				Bucket: &bucket,
+				Key:    &key,
 			},
 		)
 		if err != nil {
